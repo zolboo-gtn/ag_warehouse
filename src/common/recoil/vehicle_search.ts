@@ -81,29 +81,29 @@ const type = selector<IVehicleType | null>({
   },
 });
 
-// const searchParams = atom<URLSearchParams>({
-//   key: "vehicleSearchParams",
-//   default: new URLSearchParams(),
-// });
-// const tempSearchParams = selector<URLSearchParams>({
-//   key: "tempVehicleSearchParams",
-//   get: ({ get }) => {
-//     const { manufacturer, model, type } = get(vehicleSearch);
+const searchParams = atom<URLSearchParams>({
+  key: "vehicleSearchParams",
+  default: new URLSearchParams(),
+});
+const tempSearchParams = selector<URLSearchParams>({
+  key: "tempVehicleSearchParams",
+  get: ({ get }) => {
+    const { manufacturer, model, type } = get(vehicleSearch);
 
-//     const params = new URLSearchParams();
-//     if (manufacturer) {
-//       params.append("manufacturerId", manufacturer.key);
-//     }
-//     if (model) {
-//       params.append("modelId", model.key);
-//     }
-//     if (type) {
-//       params.append("typeId", type.key);
-//     }
+    const params = new URLSearchParams();
+    if (manufacturer) {
+      params.append("manufacturerId", manufacturer.key);
+    }
+    if (model) {
+      params.append("modelId", model.key);
+    }
+    if (type) {
+      params.append("typeId", type.key);
+    }
 
-//     return params;
-//   },
-// });
+    return params;
+  },
+});
 
 export const useVehicleSearch = () => ({
   manufacturer: useRecoilValue(manufacturer),
@@ -113,9 +113,9 @@ export const useVehicleSearch = () => ({
   type: useRecoilValue(type),
   setType: useSetRecoilState(type),
 
-  // searchParams: useRecoilValue(searchParams),
-  // setSearchParams: useSetRecoilState(searchParams),
-  // tempSearchParams: useRecoilValue(tempSearchParams),
+  searchParams: useRecoilValue(searchParams),
+  setSearchParams: useSetRecoilState(searchParams),
+  tempSearchParams: useRecoilValue(tempSearchParams),
 
   reset: useResetRecoilState(vehicleSearch),
 });
