@@ -14,4 +14,6 @@ export interface IVehicleModelDto {
   created_at: string;
   updated_at: string;
 }
-export interface IVehicleModel extends IPair {}
+export interface IVehicleModel extends IPair {
+  manufacturerId: string;
+}

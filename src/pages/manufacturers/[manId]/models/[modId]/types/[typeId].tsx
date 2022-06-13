@@ -9,13 +9,18 @@ import { useRouter } from "next/router";
 
 import { CustomTable, Spinner, SearchLayout } from "common/components";
 import { useGetVehicles } from "common/hooks";
-import type { IVehicleManufacturer, IVehicleModel } from "common/models";
+import type {
+  IVehicleManufacturer,
+  IVehicleModel,
+  IVehicleType,
+} from "common/models";
 import { useVehicleSearch } from "common/recoil";
 import { TechDocRepository } from "common/services";
 
 interface IProps {
   manufacturers: IVehicleManufacturer[];
   models: IVehicleModel[];
+  types: IVehicleType[];
 }
 export const getStaticProps: GetStaticProps<IProps> = async ({ params }) => {
   const repository = TechDocRepository.getInstance();
@@ -28,10 +33,18 @@ export const getStaticProps: GetStaticProps<IProps> = async ({ params }) => {
   const models =
     typeof manId === "string" ? await repository.getModels(manId) : [];
 
+  // get types by model id
+  const modId = params?.modId;
+  const types =
+    typeof manId === "string" && typeof modId === "string"
+      ? await repository.getTypes(manId, modId)
+      : [];
+
   return {
     props: {
       manufacturers,
       models,
+      types,
     },
     revalidate: 3600,
   };
@@ -42,15 +55,15 @@ export const getStaticPaths = async () => {
     fallback: true,
   };
 };
-const ModelsPage: NextPageWithLayout<
+const VehiclePage: NextPageWithLayout<
   InferGetStaticPropsType<typeof getStaticProps>
-> = ({ models }) => {
+> = ({ types }) => {
   const {
     isFallback,
-    query: { manId },
+    query: { manId, modId },
   } = useRouter();
 
-  if (typeof manId !== "string") {
+  if (!(typeof manId === "string" && typeof modId === "string")) {
     return null;
   }
 
@@ -62,24 +75,28 @@ const ModelsPage: NextPageWithLayout<
     );
   }
   return (
-    <main className="h-full w-full overflow-y-auto">
+    <main className="h-full w-full overflow-y-auto p-2">
       <div className="flex flex-col">
-        {models.map(({ key, value }) => (
-          <Link key={key} href={`/vehicles/${manId}/${key}`} prefetch={false}>
+        {/* {types.map(({ key, value }) => (
+          <Link
+            key={key}
+            href={`/vehicles/${manId}/${modId}/${key}`}
+            prefetch={false}
+          >
             <a>{value}</a>
           </Link>
-        ))}
+        ))} */}
       </div>
     </main>
   );
 };
 
-ModelsPage.getLayout = (page, { manufacturers, models }: IProps) => {
+VehiclePage.getLayout = (page, { manufacturers, models, types }: IProps) => {
   return (
-    <SearchLayout manufacturers={manufacturers} models={models} types={[]}>
+    <SearchLayout manufacturers={manufacturers} models={models} types={types}>
       {page}
     </SearchLayout>
   );
 };
 
-export default ModelsPage;
+export default VehiclePage;

@@ -35,7 +35,7 @@ const DashboardPage: NextPageWithLayout = () => {
   }
 
   return (
-    <main className="h-full w-full overflow-y-auto">
+    <main className="h-full w-full overflow-y-auto p-2">
       <CustomTable
         headers={[
           { key: "id", value: "id" },

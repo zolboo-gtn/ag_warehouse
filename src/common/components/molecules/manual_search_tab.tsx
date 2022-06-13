@@ -65,24 +65,24 @@ export const ManualSearchTab: FC<IManualSearchTab> = ({
 };
 
 export interface IManufacturerSelect {
-  manufacturers: IVehicleManufacturer[];
+  manufacturers?: IVehicleManufacturer[];
 }
 const ManufacturerSelect: FC<IManufacturerSelect> = ({
   manufacturers = [],
 }) => {
   const router = useRouter();
-  const {
-    query: { manId },
-  } = router;
-
+  const { manId } = router.query;
   const { manufacturer, setManufacturer, setModel, setType } =
     useVehicleSearch();
 
   // set initial value
   useEffect(() => {
-    const _manufacturer =
-      manufacturers.find((manufacturer) => manufacturer.key === manId) ?? null;
-    setManufacturer(_manufacturer);
+    if (typeof manId === "string") {
+      const _manufacturer =
+        manufacturers.find((manufacturer) => manufacturer.key === manId) ??
+        null;
+      setManufacturer(_manufacturer);
+    }
   }, [manId]);
 
   return (
@@ -98,27 +98,27 @@ const ManufacturerSelect: FC<IManufacturerSelect> = ({
           setType(null);
         }
         setManufacturer(value);
-        router.push(value ? `/vehicles/${value.key}` : "/vehicles");
+        router.push(value ? `/manufacturers/${value.key}` : "/manufacturers");
       }}
     />
   );
 };
 
 export interface IModelSelect {
-  models: IVehicleModel[];
+  models?: IVehicleModel[];
 }
 const ModelSelect: FC<IModelSelect> = ({ models = [] }) => {
   const router = useRouter();
-  const {
-    query: { manId, modId },
-  } = router;
+  const { manId, modId } = router.query;
 
   const { model, setModel, setType } = useVehicleSearch();
 
   // set initial value
   useEffect(() => {
-    const _models = models.find((model) => model.key === modId) ?? null;
-    setModel(_models);
+    if (typeof modId === "string") {
+      const _model = models.find((model) => model.key === modId) ?? null;
+      setModel(_model);
+    }
   }, [modId]);
 
   return (
@@ -135,7 +135,9 @@ const ModelSelect: FC<IModelSelect> = ({ models = [] }) => {
         }
         setModel(value);
         router.push(
-          value ? `/vehicles/${manId}/${value.key}` : `/vehicles/${manId}`
+          value
+            ? `/manufacturers/${manId}/models/${value.key}`
+            : `/manufacturers/${manId}`
         );
       }}
     />
@@ -143,20 +145,20 @@ const ModelSelect: FC<IModelSelect> = ({ models = [] }) => {
 };
 
 export interface ITypeSelect {
-  types: IVehicleType[];
+  types?: IVehicleType[];
 }
 const TypeSelect: FC<ITypeSelect> = ({ types = [] }) => {
   const router = useRouter();
-  const {
-    query: { manId, modId, typeId },
-  } = router;
+  const { manId, modId, typeId } = router.query;
 
   const { type, setType } = useVehicleSearch();
 
   // set initial value
   useEffect(() => {
-    const _type = types.find((type) => type.key === typeId) ?? null;
-    setType(_type);
+    if (typeof typeId === "string") {
+      const _type = types.find((type) => type.key === typeId) ?? null;
+      setType(_type);
+    }
   }, [typeId]);
 
   return (
@@ -171,8 +173,8 @@ const TypeSelect: FC<ITypeSelect> = ({ types = [] }) => {
         setType(value);
         router.push(
           value
-            ? `/vehicles/${manId}/${modId}/${value.key}`
-            : `/vehicles/${manId}/${modId}`
+            ? `/manufacturers/${manId}/models/${modId}/types/${value.key}`
+            : `/manufacturers/${manId}/models/${modId}`
         );
       }}
     />

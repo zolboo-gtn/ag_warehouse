@@ -33,7 +33,7 @@ export const getStaticProps: GetStaticProps<IProps> = async ({ params }) => {
   const models =
     typeof manId === "string" ? await repository.getModels(manId) : [];
 
-  // get models by manufacturer id
+  // get types by model id
   const modId = params?.modId;
   const types =
     typeof manId === "string" && typeof modId === "string"
@@ -57,15 +57,11 @@ export const getStaticPaths = async () => {
 };
 const TypesPage: NextPageWithLayout<
   InferGetStaticPropsType<typeof getStaticProps>
-> = ({ types }) => {
+> = ({ models, types }) => {
   const {
     isFallback,
     query: { manId, modId },
   } = useRouter();
-
-  if (!(typeof manId !== "string" && typeof modId !== "string")) {
-    return null;
-  }
 
   if (isFallback) {
     return (
@@ -75,18 +71,22 @@ const TypesPage: NextPageWithLayout<
     );
   }
 
+  const model = models.find((model) => model.key === modId);
   return (
-    <main className="h-full w-full overflow-y-auto">
-      <div className="flex flex-col">
-        {types.map(({ key, value }) => (
-          <Link
-            key={key}
-            href={`/vehicles/${manId}/${modId}/${key}`}
-            prefetch={false}
-          >
-            <a>{value}</a>
-          </Link>
-        ))}
+    <main className="h-full w-full overflow-y-auto p-2">
+      <div className="flex flex-col gap-y-5">
+        <h2>{model?.value}</h2>
+        <div className="flex flex-col">
+          {types.map(({ key, value }) => (
+            <Link
+              key={key}
+              href={`/manufacturers/${manId}/models/${modId}/types/${key}`}
+              prefetch={false}
+            >
+              <a>{value}</a>
+            </Link>
+          ))}
+        </div>
       </div>
     </main>
   );

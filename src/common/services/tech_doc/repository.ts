@@ -36,9 +36,14 @@ export class TechDocRepository implements ITechDocRepository {
       data: { data },
     } = await this.client.get<{ data: IVehicleManufacturerDto[] }>(url);
 
+    if (!data) {
+      return [];
+    }
+
     return data.map(({ logo, manuid, manuname }) => ({
       key: `${manuid}`,
       value: manuname,
+      //
       logo,
     }));
   };
@@ -53,9 +58,15 @@ export class TechDocRepository implements ITechDocRepository {
       data: { data },
     } = await this.client.get<{ data: IVehicleModelDto[] }>(url);
 
-    return data.map(({ modelid, modelname }) => ({
+    if (!data) {
+      return [];
+    }
+
+    return data.map(({ manuid, modelid, modelname }) => ({
       key: `${modelid}`,
       value: modelname,
+      //
+      manufacturerId: `${manuid}`,
     }));
   };
   getTypes = async (
@@ -73,9 +84,16 @@ export class TechDocRepository implements ITechDocRepository {
       data: { data },
     } = await this.client.get<{ data: IVehicleTypeDto[] }>(url);
 
-    return data.map(({ carid, carname }) => ({
+    if (!data) {
+      return [];
+    }
+
+    return data.map(({ carid, carname, manuid, modelid }) => ({
       key: `${carid}`,
       value: carname,
+      //
+      manufacturerId: `${manuid}`,
+      modelId: `${modelid}`,
     }));
   };
   getVehicles = async (query: URLSearchParams): Promise<IVehicle[]> => {
@@ -85,6 +103,10 @@ export class TechDocRepository implements ITechDocRepository {
     const {
       data: { data },
     } = await this.client.get<{ data: IVehicleDto[] }>(url);
+
+    if (!data) {
+      return [];
+    }
 
     return data.map(({ carid, manuid, modelid }) => ({
       id: `${carid}`,

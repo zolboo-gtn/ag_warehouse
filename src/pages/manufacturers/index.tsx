@@ -6,11 +6,17 @@ import type {
 } from "next";
 import Link from "next/link";
 
-import { CustomTable, Spinner, SearchLayout } from "common/components";
+import {
+  CustomTable,
+  Spinner,
+  SearchLayout,
+  ManufacturerCard,
+} from "common/components";
 import { useGetVehicles } from "common/hooks";
 import type { IVehicleManufacturer } from "common/models";
 import { useVehicleSearch } from "common/recoil";
 import { TechDocRepository } from "common/services";
+import { classNames } from "common/utils";
 
 interface IProps {
   manufacturers: IVehicleManufacturer[];
@@ -31,23 +37,31 @@ const ManufacturersPage: NextPageWithLayout<
   InferGetStaticPropsType<typeof getStaticProps>
 > = ({ manufacturers }) => {
   return (
-    <main className="h-full w-full overflow-y-auto">
-      <div className="flex flex-col">
-        {manufacturers.map(({ key, value }) => (
-          <Link key={key} href={`/vehicles/${key}`} prefetch={false}>
-            <a>{value}</a>
-          </Link>
-        ))}
+    <main className="h-full w-full overflow-y-auto p-2">
+      <div className="flex flex-col gap-y-5">
+        <h2>{`Manufacturers`}</h2>
+        <div
+          className={classNames(
+            "grid grid-cols-2 gap-5",
+            "md:grid-cols-3",
+            "lg:grid-cols-4"
+          )}
+        >
+          {manufacturers.map(({ key, value }) => (
+            <ManufacturerCard
+              key={key}
+              href={`/manufacturers/${key}`}
+              label={value}
+              prefetch={false}
+            />
+          ))}
+        </div>
       </div>
     </main>
   );
 };
 ManufacturersPage.getLayout = (page, { manufacturers }: IProps) => {
-  return (
-    <SearchLayout manufacturers={manufacturers} models={[]} types={[]}>
-      {page}
-    </SearchLayout>
-  );
+  return <SearchLayout manufacturers={manufacturers}>{page}</SearchLayout>;
 };
 
 export default ManufacturersPage;
