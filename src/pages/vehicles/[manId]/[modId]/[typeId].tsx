@@ -68,7 +68,11 @@ const VehiclePage: NextPageWithLayout<
   }
 
   if (isFallback) {
-    return <div>{`isFallback`}</div>;
+    return (
+      <div className="flex items-center justify-center bg-black/25">
+        <Spinner />
+      </div>
+    );
   }
   return (
     <main className="h-full w-full overflow-y-auto">

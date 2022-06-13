@@ -23,22 +23,7 @@ export const ManualSearchTab: FC<IManualSearchTab> = ({
   models,
   types,
 }) => {
-  const { push } = useRouter();
-  const { manufacturer, model, type, reset } = useVehicleSearch();
-
-  useEffect(() => {
-    let url = "/vehicles";
-    if (manufacturer) {
-      url += `/${manufacturer.key}`;
-      if (model) {
-        url += `/${model.key}`;
-        if (type) {
-          url += `/${type.key}`;
-        }
-      }
-    }
-    push(url);
-  }, [manufacturer, model, type, push]);
+  const { reset } = useVehicleSearch();
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -62,7 +47,6 @@ export const ManualSearchTab: FC<IManualSearchTab> = ({
       <TypeSelect types={types} />
       <div className="mt-2 flex gap-x-2">
         <button
-          disabled={!manufacturer}
           type="button"
           className={classNames(
             "flex h-10 w-full items-center justify-center rounded-md bg-red-400 duration-200",
@@ -102,7 +86,7 @@ const ManufacturerSelect: FC<IManufacturerSelect> = ({
             null
         : null
     );
-  }, [manId, manufacturers, setManufacturer]);
+  }, [manId]);
 
   return (
     <CustomSelect
@@ -117,6 +101,7 @@ const ManufacturerSelect: FC<IManufacturerSelect> = ({
           setType(null);
         }
         setManufacturer(value);
+        router.push(value ? `/vehicles/${value.key}` : "/vehicles");
       }}
     />
   );
@@ -128,7 +113,7 @@ export interface IModelSelect {
 const ModelSelect: FC<IModelSelect> = ({ models = [] }) => {
   const router = useRouter();
   const {
-    query: { modId },
+    query: { manId, modId },
   } = router;
 
   const { model, setModel, setType } = useVehicleSearch();
@@ -140,7 +125,7 @@ const ModelSelect: FC<IModelSelect> = ({ models = [] }) => {
         ? models.find((model) => model.key === modId) ?? null
         : null
     );
-  }, [modId, models, setModel]);
+  }, [modId]);
 
   return (
     <CustomSelect
@@ -155,6 +140,9 @@ const ModelSelect: FC<IModelSelect> = ({ models = [] }) => {
           setType(null);
         }
         setModel(value);
+        router.push(
+          value ? `/vehicles/${manId}/${value.key}` : `/vehicles/${manId}`
+        );
       }}
     />
   );
@@ -166,7 +154,7 @@ export interface ITypeSelect {
 const TypeSelect: FC<ITypeSelect> = ({ types = [] }) => {
   const router = useRouter();
   const {
-    query: { typeId },
+    query: { manId, modId, typeId },
   } = router;
 
   const { type, setType } = useVehicleSearch();
@@ -178,7 +166,7 @@ const TypeSelect: FC<ITypeSelect> = ({ types = [] }) => {
         ? types.find((type) => type.key === typeId) ?? null
         : null
     );
-  }, [typeId, types, setType]);
+  }, [typeId]);
 
   return (
     <CustomSelect
@@ -190,6 +178,11 @@ const TypeSelect: FC<ITypeSelect> = ({ types = [] }) => {
       value={type}
       onChange={(value) => {
         setType(value);
+        router.push(
+          value
+            ? `/vehicles/${manId}/${modId}/${value.key}`
+            : `/vehicles/${manId}/${modId}`
+        );
       }}
     />
   );

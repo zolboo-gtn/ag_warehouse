@@ -68,7 +68,11 @@ const TypesPage: NextPageWithLayout<
   }
 
   if (isFallback) {
-    return <div>{`isFallback`}</div>;
+    return (
+      <div className="flex items-center justify-center bg-black/25">
+        <Spinner />
+      </div>
+    );
   }
 
   return (
