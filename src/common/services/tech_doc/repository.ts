@@ -36,9 +36,10 @@ export class TechDocRepository implements ITechDocRepository {
       data: { data },
     } = await this.client.get<{ data: IVehicleManufacturerDto[] }>(url);
 
-    return data.map(({ manuid, manuname }) => ({
+    return data.map(({ logo, manuid, manuname }) => ({
       key: `${manuid}`,
       value: manuname,
+      logo,
     }));
   };
   getModels = async (manufacturerId: string): Promise<IVehicleModel[]> => {

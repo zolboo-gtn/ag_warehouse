@@ -30,22 +30,6 @@ export const getStaticProps: GetStaticProps<IProps> = async () => {
 const ManufacturersPage: NextPageWithLayout<
   InferGetStaticPropsType<typeof getStaticProps>
 > = ({ manufacturers }) => {
-  // const { searchParams } = useVehicleSearch();
-  // const { data, error } = useGetVehicles(searchParams);
-
-  // if (error) {
-  //   // TODO: error component
-  //   return <div>{error.message}</div>;
-  // }
-
-  // if (!data) {
-  //   return (
-  //     <div className="flex items-center justify-center bg-black/25">
-  //       <Spinner />
-  //     </div>
-  //   );
-  // }
-
   return (
     <main className="h-full w-full overflow-y-auto">
       <div className="flex flex-col">

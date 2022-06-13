@@ -8,12 +8,17 @@ import {
   useResetRecoilState,
 } from "recoil";
 
-import type { IPair } from "common/models";
+import type {
+  IPair,
+  IVehicleManufacturer,
+  IVehicleModel,
+  IVehicleType,
+} from "common/models";
 
 interface IVehicleSearch {
-  manufacturer: IPair | null;
-  model: IPair | null;
-  type: IPair | null;
+  manufacturer: IVehicleManufacturer | null;
+  model: IVehicleModel | null;
+  type: IVehicleType | null;
 }
 const defaultState: IVehicleSearch = {
   manufacturer: null,
@@ -24,7 +29,7 @@ const vehicleSearch = atom<IVehicleSearch>({
   key: "vehicleSearch",
   default: defaultState,
 });
-const manufacturer = selector<IPair | null>({
+const manufacturer = selector<IVehicleManufacturer | null>({
   key: "manufacturer",
   get: ({ get }) => {
     const { manufacturer } = get(vehicleSearch);
@@ -41,7 +46,7 @@ const manufacturer = selector<IPair | null>({
     });
   },
 });
-const model = selector<IPair | null>({
+const model = selector<IVehicleModel | null>({
   key: "model",
   get: ({ get }) => {
     const { model } = get(vehicleSearch);
@@ -58,7 +63,7 @@ const model = selector<IPair | null>({
     });
   },
 });
-const type = selector<IPair | null>({
+const type = selector<IVehicleType | null>({
   key: "type",
   get: ({ get }) => {
     const { type } = get(vehicleSearch);
@@ -76,29 +81,29 @@ const type = selector<IPair | null>({
   },
 });
 
-const searchParams = atom<URLSearchParams>({
-  key: "vehicleSearchParams",
-  default: new URLSearchParams(),
-});
-const tempSearchParams = selector<URLSearchParams>({
-  key: "tempVehicleSearchParams",
-  get: ({ get }) => {
-    const { manufacturer, model, type } = get(vehicleSearch);
+// const searchParams = atom<URLSearchParams>({
+//   key: "vehicleSearchParams",
+//   default: new URLSearchParams(),
+// });
+// const tempSearchParams = selector<URLSearchParams>({
+//   key: "tempVehicleSearchParams",
+//   get: ({ get }) => {
+//     const { manufacturer, model, type } = get(vehicleSearch);
 
-    const params = new URLSearchParams();
-    if (manufacturer) {
-      params.append("manufacturerId", manufacturer.key);
-    }
-    if (model) {
-      params.append("modelId", model.key);
-    }
-    if (type) {
-      params.append("typeId", type.key);
-    }
+//     const params = new URLSearchParams();
+//     if (manufacturer) {
+//       params.append("manufacturerId", manufacturer.key);
+//     }
+//     if (model) {
+//       params.append("modelId", model.key);
+//     }
+//     if (type) {
+//       params.append("typeId", type.key);
+//     }
 
-    return params;
-  },
-});
+//     return params;
+//   },
+// });
 
 export const useVehicleSearch = () => ({
   manufacturer: useRecoilValue(manufacturer),
@@ -108,9 +113,9 @@ export const useVehicleSearch = () => ({
   type: useRecoilValue(type),
   setType: useSetRecoilState(type),
 
-  searchParams: useRecoilValue(searchParams),
-  setSearchParams: useSetRecoilState(searchParams),
-  tempSearchParams: useRecoilValue(tempSearchParams),
+  // searchParams: useRecoilValue(searchParams),
+  // setSearchParams: useSetRecoilState(searchParams),
+  // tempSearchParams: useRecoilValue(tempSearchParams),
 
   reset: useResetRecoilState(vehicleSearch),
 });

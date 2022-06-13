@@ -13,4 +13,6 @@ export interface IVehicleManufacturerDto {
   updated_at: string;
   carmodels_count: number;
 }
-export interface IVehicleManufacturer extends IPair {}
+export interface IVehicleManufacturer extends IPair {
+  logo: string | null;
+}

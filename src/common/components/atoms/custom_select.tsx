@@ -6,14 +6,16 @@ import type { GroupBase, Props } from "react-select";
 import { IPair } from "common/models";
 import { classNames } from "common/utils";
 
-interface ICustomSelect<K, V>
-  extends Props<IPair<K, V>, false, GroupBase<IPair<K, V>>> {}
-export const CustomSelect = <K, V>({
+export const CustomSelect = <
+  Option extends IPair,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>
+>({
   getOptionLabel = (option) => `${option.value}`,
   getOptionValue = (option) => `${option.key}`,
   menuPlacement = "auto",
   ...props
-}: PropsWithChildren<ICustomSelect<K, V>>) => {
+}: PropsWithChildren<Props<Option, IsMulti, Group>>) => {
   return (
     <Select
       {...props}
@@ -24,13 +26,17 @@ export const CustomSelect = <K, V>({
   );
 };
 
-export const CustomSelectWithImage = <K, V>({
+export const CustomSelectWithImage = <
+  Option extends IPair,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>
+>({
   image,
   menuPlacement = "auto",
   getOptionLabel = (option) => `${option.value}`,
   getOptionValue = (option) => `${option.key}`,
   ...props
-}: PropsWithChildren<ICustomSelect<K, V> & { image: string }>) => {
+}: PropsWithChildren<Props<Option, IsMulti, Group> & { image: string }>) => {
   return (
     <Select
       {...props}

@@ -80,12 +80,9 @@ const ManufacturerSelect: FC<IManufacturerSelect> = ({
 
   // set initial value
   useEffect(() => {
-    setManufacturer(
-      typeof manId === "string"
-        ? manufacturers.find((manufacturer) => manufacturer.key === manId) ??
-            null
-        : null
-    );
+    const _manufacturer =
+      manufacturers.find((manufacturer) => manufacturer.key === manId) ?? null;
+    setManufacturer(_manufacturer);
   }, [manId]);
 
   return (
@@ -120,11 +117,8 @@ const ModelSelect: FC<IModelSelect> = ({ models = [] }) => {
 
   // set initial value
   useEffect(() => {
-    setModel(
-      typeof modId === "string"
-        ? models.find((model) => model.key === modId) ?? null
-        : null
-    );
+    const _models = models.find((model) => model.key === modId) ?? null;
+    setModel(_models);
   }, [modId]);
 
   return (
@@ -161,11 +155,8 @@ const TypeSelect: FC<ITypeSelect> = ({ types = [] }) => {
 
   // set initial value
   useEffect(() => {
-    setType(
-      typeof typeId === "string"
-        ? types.find((type) => type.key === typeId) ?? null
-        : null
-    );
+    const _type = types.find((type) => type.key === typeId) ?? null;
+    setType(_type);
   }, [typeId]);
 
   return (
