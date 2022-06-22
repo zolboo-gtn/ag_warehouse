@@ -79,7 +79,7 @@ const TypesPage: NextPageWithLayout<
           {engines.map(({ key, value }) => (
             <Link
               key={key}
-              href={`/manufacturers/${manId}/models/${modId}/types/${key}`}
+              href={`/manufacturers/${manId}/models/${modId}/engines/${key}`}
               prefetch={false}
             >
               <a>{value}</a>
