@@ -4,7 +4,7 @@ import useSWR from "swr";
 import type { IPair } from "common/models";
 import { TechDocRepository } from "common/services";
 
-export const useGetTypes = (
+export const useGetEngines = (
   manufacturerId: string | null,
   modelId: string | null,
   keyword: string
@@ -19,10 +19,10 @@ export const useGetTypes = (
   if (keyword) {
     params.append("keyword", keyword);
   }
-  const key = params.keys.length > 0 ? `/getTypes?${params}` : null;
+  const key = params.keys.length > 0 ? `/getEngines?${params}` : null;
 
   const { data, error, mutate } = useSWR<IPair[], AxiosError>(key, () =>
-    repository.getTypes(manufacturerId!, modelId!)
+    repository.getEngines(manufacturerId!, modelId!)
   );
 
   return { data, error, mutate };

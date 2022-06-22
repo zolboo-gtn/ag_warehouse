@@ -7,10 +7,8 @@ import type {
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { CustomTable, Spinner, SearchLayout } from "common/components";
-import { useGetVehicles } from "common/hooks";
+import { Spinner, SearchLayout } from "common/components";
 import type { IVehicleManufacturer, IVehicleModel } from "common/models";
-import { useVehicleSearch } from "common/recoil";
 import { TechDocRepository } from "common/services";
 
 interface IProps {

@@ -7,20 +7,19 @@ import type {
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { CustomTable, Spinner, SearchLayout } from "common/components";
-import { useGetVehicles } from "common/hooks";
+import { Spinner, SearchLayout } from "common/components";
 import type {
+  IVehicleEngine,
   IVehicleManufacturer,
   IVehicleModel,
-  IVehicleType,
 } from "common/models";
 import { useVehicleSearch } from "common/recoil";
 import { TechDocRepository } from "common/services";
 
 interface IProps {
+  engines: IVehicleEngine[];
   manufacturers: IVehicleManufacturer[];
   models: IVehicleModel[];
-  types: IVehicleType[];
 }
 export const getStaticProps: GetStaticProps<IProps> = async ({ params }) => {
   const repository = TechDocRepository.getInstance();
@@ -35,16 +34,16 @@ export const getStaticProps: GetStaticProps<IProps> = async ({ params }) => {
 
   // get types by model id
   const modId = params?.modId;
-  const types =
+  const engines =
     typeof manId === "string" && typeof modId === "string"
-      ? await repository.getTypes(manId, modId)
+      ? await repository.getEngines(manId, modId)
       : [];
 
   return {
     props: {
+      engines,
       manufacturers,
       models,
-      types,
     },
     revalidate: 3600,
   };
@@ -57,7 +56,7 @@ export const getStaticPaths = async () => {
 };
 const TypesPage: NextPageWithLayout<
   InferGetStaticPropsType<typeof getStaticProps>
-> = ({ models, types }) => {
+> = ({ engines, models }) => {
   const {
     isFallback,
     query: { manId, modId },
@@ -77,7 +76,7 @@ const TypesPage: NextPageWithLayout<
       <div className="flex flex-col gap-y-5">
         <h2>{model?.value}</h2>
         <div className="flex flex-col">
-          {types.map(({ key, value }) => (
+          {engines.map(({ key, value }) => (
             <Link
               key={key}
               href={`/manufacturers/${manId}/models/${modId}/types/${key}`}
@@ -92,9 +91,13 @@ const TypesPage: NextPageWithLayout<
   );
 };
 
-TypesPage.getLayout = (page, { manufacturers, models, types }: IProps) => {
+TypesPage.getLayout = (page, { engines, manufacturers, models }: IProps) => {
   return (
-    <SearchLayout manufacturers={manufacturers} models={models} types={types}>
+    <SearchLayout
+      engines={engines}
+      manufacturers={manufacturers}
+      models={models}
+    >
       {page}
     </SearchLayout>
   );

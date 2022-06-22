@@ -1,7 +1,7 @@
 import type { IPair } from "./pair";
 
 type TCategory = "P";
-export interface IVehicleTypeDto {
+export interface IVehicleEngineDto {
   id: number;
   carid: number;
   carname: string;
@@ -13,7 +13,7 @@ export interface IVehicleTypeDto {
   created_at: string;
   updated_at: string;
 }
-export interface IVehicleType extends IPair {
+export interface IVehicleEngine extends IPair {
   manufacturerId: string;
   modelId: string;
 }

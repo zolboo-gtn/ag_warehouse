@@ -1,14 +1,16 @@
 import type { AxiosInstance } from "axios";
 
 import type {
+  IPartCategory,
+  IPartCategoryDto,
+  IVehicleEngine,
   IVehicleManufacturer,
   IVehicleModel,
-  IVehicleType,
   IVehicle,
   IVehicleDto,
+  IVehicleEngineDto,
   IVehicleManufacturerDto,
   IVehicleModelDto,
-  IVehicleTypeDto,
 } from "common/models";
 import { BackendClient } from "common/services/backend_client";
 
@@ -29,8 +31,6 @@ export class TechDocRepository implements ITechDocRepository {
   }
 
   getManufacturers = async (): Promise<IVehicleManufacturer[]> => {
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
-
     const url = "/manufacturers";
     const {
       data: { data },
@@ -44,12 +44,10 @@ export class TechDocRepository implements ITechDocRepository {
       key: `${manuid}`,
       value: manuname,
       //
-      logo,
+      logo: logo ?? null,
     }));
   };
   getModels = async (manufacturerId: string): Promise<IVehicleModel[]> => {
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
-
     const params = new URLSearchParams({
       manuid: manufacturerId,
     });
@@ -69,20 +67,18 @@ export class TechDocRepository implements ITechDocRepository {
       manufacturerId: `${manuid}`,
     }));
   };
-  getTypes = async (
+  getEngines = async (
     manufacturerId: string,
     modelId: string
-  ): Promise<IVehicleType[]> => {
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
-
+  ): Promise<IVehicleEngine[]> => {
     const params = new URLSearchParams({
       manuid: manufacturerId,
-      modelid: modelId,
+      modid: modelId,
     });
     const url = `/engines/?${params}`;
     const {
       data: { data },
-    } = await this.client.get<{ data: IVehicleTypeDto[] }>(url);
+    } = await this.client.get<{ data: IVehicleEngineDto[] }>(url);
 
     if (!data) {
       return [];
@@ -96,23 +92,57 @@ export class TechDocRepository implements ITechDocRepository {
       modelId: `${modelid}`,
     }));
   };
-  getVehicles = async (query: URLSearchParams): Promise<IVehicle[]> => {
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    const url = `/carinfo?${query}`;
+  getVehicle = async (carId: string): Promise<IVehicle | null> => {
+    const params = new URLSearchParams({
+      carid: carId,
+    });
+    const url = `/carinfo?${params}`;
     const {
       data: { data },
-    } = await this.client.get<{ data: IVehicleDto[] }>(url);
+    } = await this.client.get<{ data: IVehicleDto }>(url);
+
+    if (!data) {
+      return null;
+    }
+
+    return {
+      engineId: `${data.typenumber}`,
+      id: `${data.id}`,
+      manufacturerId: `${data.manuid}`,
+      modelId: `${data.modelid}`,
+    };
+  };
+  getPartCategories = async (): Promise<IPartCategory[]> => {
+    const url = `/categories`;
+    const {
+      data: { data },
+    } = await this.client.get<{ data: IPartCategoryDto[] }>(url);
 
     if (!data) {
       return [];
     }
 
-    return data.map(({ carid, manuid, modelid }) => ({
-      id: `${carid}`,
-      manufacturer: `${manuid}`,
-      model: `${modelid}`,
-      type: "",
-    }));
+    return data.map(
+      ({
+        categorygroupid,
+        categoryname,
+        parentid,
+        // TODO: use children
+        categories,
+        child_categories,
+      }) => ({
+        children: (categories ?? child_categories ?? []).map(
+          ({ categorygroupid, categoryname, parentid }) => ({
+            children: [],
+            id: `${categorygroupid}`,
+            name: categoryname,
+            parentId: `${parentid}`,
+          })
+        ),
+        id: `${categorygroupid}`,
+        name: categoryname,
+        parentId: `${parentid}`,
+      })
+    );
   };
 }

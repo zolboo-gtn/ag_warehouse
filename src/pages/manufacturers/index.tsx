@@ -12,9 +12,7 @@ import {
   SearchLayout,
   ManufacturerCard,
 } from "common/components";
-import { useGetVehicles } from "common/hooks";
 import type { IVehicleManufacturer } from "common/models";
-import { useVehicleSearch } from "common/recoil";
 import { TechDocRepository } from "common/services";
 import { classNames } from "common/utils";
 

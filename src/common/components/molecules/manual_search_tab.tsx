@@ -1,50 +1,38 @@
-import { SearchIcon, XIcon } from "@heroicons/react/solid";
+import { XIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { FC, FormEvent } from "react";
 
 import { CustomSelect } from "common/components";
-import { useGetManufacturers, useGetModels, useGetTypes } from "common/hooks";
 import type {
-  IPair,
+  IVehicleEngine,
   IVehicleManufacturer,
   IVehicleModel,
-  IVehicleType,
 } from "common/models";
 import { useVehicleSearch } from "common/recoil";
-import { classNames, useDebouncedValue } from "common/utils";
+import { classNames } from "common/utils";
 
 export interface IManualSearchTab
   extends IManufacturerSelect,
     IModelSelect,
-    ITypeSelect {}
+    IEngineSelect {}
 export const ManualSearchTab: FC<IManualSearchTab> = ({
+  engines,
   manufacturers,
   models,
-  types,
 }) => {
+  const router = useRouter();
   const { reset } = useVehicleSearch();
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // let url = "/vehicles";
-    // if (manufacturer) {
-    //   url += `/${manufacturer.key}`;
-    //   if (model) {
-    //     url += `/${model.key}`;
-    //     if (type) {
-    //       url += `/${type.key}`;
-    //     }
-    //   }
-    // }
-    // push(url);
   };
   return (
     <form className="flex flex-col gap-y-2 p-2" onSubmit={onSubmit}>
       <h5>{`Manual Search`}</h5>
       <ManufacturerSelect manufacturers={manufacturers} />
       <ModelSelect models={models} />
-      <TypeSelect types={types} />
+      <EngineSelect engines={engines} />
       <div className="mt-2 flex gap-x-2">
         <button
           type="button"
@@ -52,7 +40,10 @@ export const ManualSearchTab: FC<IManualSearchTab> = ({
             "flex h-10 w-full items-center justify-center rounded-md bg-red-400 duration-200",
             "disabled:opacity-40"
           )}
-          onClick={reset}
+          onClick={async () => {
+            await router.push("/manufacturers");
+            reset();
+          }}
         >
           <XIcon className="h-5 w-5 text-white" />
         </button>
@@ -72,12 +63,12 @@ const ManufacturerSelect: FC<IManufacturerSelect> = ({
 }) => {
   const router = useRouter();
   const { manId } = router.query;
-  const { manufacturer, setManufacturer, setModel, setType } =
+  const { manufacturer, setEngine, setManufacturer, setModel } =
     useVehicleSearch();
 
   // set initial value
   useEffect(() => {
-    if (typeof manId === "string") {
+    if (router.isReady && typeof manId === "string") {
       const _manufacturer =
         manufacturers.find((manufacturer) => manufacturer.key === manId) ??
         null;
@@ -95,7 +86,7 @@ const ManufacturerSelect: FC<IManufacturerSelect> = ({
       onChange={(value) => {
         if (!value) {
           setModel(null);
-          setType(null);
+          setEngine(null);
         }
         setManufacturer(value);
         router.push(value ? `/manufacturers/${value.key}` : "/manufacturers");
@@ -111,11 +102,11 @@ const ModelSelect: FC<IModelSelect> = ({ models = [] }) => {
   const router = useRouter();
   const { manId, modId } = router.query;
 
-  const { model, setModel, setType } = useVehicleSearch();
+  const { model, setEngine, setModel } = useVehicleSearch();
 
   // set initial value
   useEffect(() => {
-    if (typeof modId === "string") {
+    if (router.isReady && typeof modId === "string") {
       const _model = models.find((model) => model.key === modId) ?? null;
       setModel(_model);
     }
@@ -131,7 +122,7 @@ const ModelSelect: FC<IModelSelect> = ({ models = [] }) => {
       value={model}
       onChange={(value) => {
         if (!value) {
-          setType(null);
+          setEngine(null);
         }
         setModel(value);
         router.push(
@@ -144,36 +135,36 @@ const ModelSelect: FC<IModelSelect> = ({ models = [] }) => {
   );
 };
 
-export interface ITypeSelect {
-  types?: IVehicleType[];
+export interface IEngineSelect {
+  engines?: IVehicleEngine[];
 }
-const TypeSelect: FC<ITypeSelect> = ({ types = [] }) => {
+const EngineSelect: FC<IEngineSelect> = ({ engines = [] }) => {
   const router = useRouter();
-  const { manId, modId, typeId } = router.query;
+  const { engineId, manId, modId } = router.query;
 
-  const { type, setType } = useVehicleSearch();
+  const { engine, setEngine } = useVehicleSearch();
 
   // set initial value
   useEffect(() => {
-    if (typeof typeId === "string") {
-      const _type = types.find((type) => type.key === typeId) ?? null;
-      setType(_type);
+    if (router.isReady && typeof engineId === "string") {
+      const _engine = engines.find((engine) => engine.key === engineId) ?? null;
+      setEngine(_engine);
     }
-  }, [typeId]);
+  }, [engineId]);
 
   return (
     <CustomSelect
-      instanceId="type"
+      instanceId="engine"
       isClearable
-      isDisabled={types.length === 0}
-      options={types}
-      placeholder={`Type`}
-      value={type}
+      isDisabled={engines.length === 0}
+      options={engines}
+      placeholder={`Engine`}
+      value={engine}
       onChange={(value) => {
-        setType(value);
+        setEngine(value);
         router.push(
           value
-            ? `/manufacturers/${manId}/models/${modId}/types/${value.key}`
+            ? `/manufacturers/${manId}/models/${modId}/engines/${value.key}`
             : `/manufacturers/${manId}/models/${modId}`
         );
       }}

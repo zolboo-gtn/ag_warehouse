@@ -10,20 +10,20 @@ import {
 
 import type {
   IPair,
+  IVehicleEngine,
   IVehicleManufacturer,
   IVehicleModel,
-  IVehicleType,
 } from "common/models";
 
 interface IVehicleSearch {
+  engine: IVehicleEngine | null;
   manufacturer: IVehicleManufacturer | null;
   model: IVehicleModel | null;
-  type: IVehicleType | null;
 }
 const defaultState: IVehicleSearch = {
+  engine: null,
   manufacturer: null,
   model: null,
-  type: null,
 };
 const vehicleSearch = atom<IVehicleSearch>({
   key: "vehicleSearch",
@@ -63,19 +63,19 @@ const model = selector<IVehicleModel | null>({
     });
   },
 });
-const type = selector<IVehicleType | null>({
+const engine = selector<IVehicleEngine | null>({
   key: "type",
   get: ({ get }) => {
-    const { type } = get(vehicleSearch);
+    const { engine } = get(vehicleSearch);
 
-    return type;
+    return engine;
   },
   set: ({ set }, newValue) => {
     set(vehicleSearch, (oldValue) => {
       return newValue instanceof DefaultValue
         ? newValue
         : produce(oldValue, (draft) => {
-            draft.type = newValue;
+            draft.engine = newValue;
           });
     });
   },
@@ -88,7 +88,7 @@ const searchParams = atom<URLSearchParams>({
 const tempSearchParams = selector<URLSearchParams>({
   key: "tempVehicleSearchParams",
   get: ({ get }) => {
-    const { manufacturer, model, type } = get(vehicleSearch);
+    const { engine, manufacturer, model } = get(vehicleSearch);
 
     const params = new URLSearchParams();
     if (manufacturer) {
@@ -97,8 +97,8 @@ const tempSearchParams = selector<URLSearchParams>({
     if (model) {
       params.append("modelId", model.key);
     }
-    if (type) {
-      params.append("typeId", type.key);
+    if (engine) {
+      params.append("engineId", engine.key);
     }
 
     return params;
@@ -110,8 +110,8 @@ export const useVehicleSearch = () => ({
   setManufacturer: useSetRecoilState(manufacturer),
   model: useRecoilValue(model),
   setModel: useSetRecoilState(model),
-  type: useRecoilValue(type),
-  setType: useSetRecoilState(type),
+  engine: useRecoilValue(engine),
+  setEngine: useSetRecoilState(engine),
 
   searchParams: useRecoilValue(searchParams),
   setSearchParams: useSetRecoilState(searchParams),

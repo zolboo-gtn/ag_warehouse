@@ -1,19 +1,17 @@
 export interface IVehicleDto {
-  id: number;
   carid: number;
-  carname: string;
-  cartype: string;
-  modelid: number;
-  manuid: number;
-  description: string | null;
-  status: number;
   created_at: string;
+  description: string | null;
+  id: number;
+  manuid: number;
+  modelid: number;
+  typenumber: number;
   updated_at: string;
 }
 
 export interface IVehicle {
+  engineId: string;
   id: string;
-  manufacturer: string;
-  model: string;
-  type: string;
+  manufacturerId: string;
+  modelId: string;
 }
