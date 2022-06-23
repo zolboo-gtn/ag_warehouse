@@ -1,5 +1,6 @@
 import type { AxiosInstance } from "axios";
 
+import { partCategoriesFromJson } from "common/models";
 import type {
   IPartCategory,
   IPartCategoryDto,
@@ -122,27 +123,6 @@ export class TechDocRepository implements ITechDocRepository {
       return [];
     }
 
-    return data.map(
-      ({
-        categorygroupid,
-        categoryname,
-        parentid,
-        // TODO: use children
-        categories,
-        child_categories,
-      }) => ({
-        children: (categories ?? child_categories ?? []).map(
-          ({ categorygroupid, categoryname, parentid }) => ({
-            children: [],
-            id: `${categorygroupid}`,
-            name: categoryname,
-            parentId: `${parentid}`,
-          })
-        ),
-        id: `${categorygroupid}`,
-        name: categoryname,
-        parentId: `${parentid}`,
-      })
-    );
+    return partCategoriesFromJson(data);
   };
 }

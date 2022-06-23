@@ -4,10 +4,6 @@ export interface IPartCategoryDto {
   categorynamemn: string | null;
   children: IPartCategoryDto[];
   parentid: number | null;
-
-  // TODO: use children
-  categories?: IPartCategoryDto[];
-  child_categories?: IPartCategoryDto[];
 }
 export interface IPartCategory {
   children: IPartCategory[];
@@ -15,3 +11,14 @@ export interface IPartCategory {
   name: string;
   parentId: string;
 }
+
+export const partCategoriesFromJson = (
+  json: IPartCategoryDto[]
+): IPartCategory[] => {
+  return json.map(({ categorygroupid, categoryname, children, parentid }) => ({
+    children: partCategoriesFromJson(children),
+    id: `${categorygroupid}`,
+    name: categoryname,
+    parentId: `${parentid}`,
+  }));
+};

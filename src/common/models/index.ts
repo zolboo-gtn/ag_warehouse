@@ -1,5 +1,6 @@
 export type { IPair } from "./pair";
 
+export { partCategoriesFromJson } from "./part_category";
 export type { IPartCategory, IPartCategoryDto } from "./part_category";
 export type { IVehicle, IVehicleDto } from "./vehicle";
 export type { IVehicleEngine, IVehicleEngineDto } from "./vehicle_engine";
